@@ -82,12 +82,12 @@ def main():
     def chat(text):
         container = st.container(border=True)
         tempo ()
-        container.text_input("🤖**BOT:**",value=quebrar_linha(text,tamanho=10),disabled=True,max_chars=500)
+        container.write("🤖**BOT:** "+quebrar_linha(text))
 
     def chat_r(text):
         container = st.container(border=True)
         
-        container.text_input("👤**EU:**",value=quebrar_linha(text,tamanho=10)+" ✔️",disabled=True,max_chars=500)
+        container.write("👤**EU: **"+quebrar_linha(text)+" ✔️")
 
 
        
