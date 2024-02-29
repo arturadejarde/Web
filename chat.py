@@ -1,9 +1,40 @@
 import streamlit as st
 from nltk.chat.util import Chat, reflections
+import time
 
-def chat (text):
-    a =st.text_input("🤖**BOT:**", value=text,disabled=True)
-    return a
+def quebrar_linha(texto, tamanho=29):
+    """
+    Função para quebrar uma linha de texto a cada 'tamanho' caracteres.
+    
+    Parâmetros:
+    texto (str): O texto a ser quebrado em linhas.
+    tamanho (int): O número máximo de caracteres por linha. O padrão é 29.
+    
+    Retorna:
+    str: O texto com quebras de linha a cada 'tamanho' caracteres.
+    """
+    palavras = texto.split()
+    linhas = []
+    linha_atual = palavras[0]
+
+    for palavra in palavras[1:]:
+        if len(linha_atual) + len(palavra) < tamanho:
+            linha_atual += ' ' + palavra
+        else:
+            linhas.append(linha_atual)
+            linha_atual = palavra
+
+    linhas.append(linha_atual)
+    return '\n'.join(linhas)
+
+
+def tempo ():
+    with st.empty():
+        for seconds in range(3):
+            st.write(f"Falta ⏳ {seconds} segundos")
+            time.sleep(1)
+        st.write("✔️ Pronto !")
+
 
 
 def main():
@@ -30,6 +61,7 @@ def main():
     """
 
 
+
     st.write(disabled_text_css, unsafe_allow_html=True)
     
     st.title("Chatbot de Emergência")
@@ -46,32 +78,53 @@ def main():
     chatbot = Chat(Contato, reflections)
 
     st.write("Olá! Sou o Chatbot de Emergência. Como posso ajudar você hoje?")
+
+    def chat(text):
+        container = st.container(border=True)
+        tempo ()
+        container.text_input("🤖**BOT:**",value=quebrar_linha(text,tamanho=10),disabled=True,max_chars=500)
+
+    def chat_r(text):
+        container = st.container(border=True)
+        
+        container.text_input("👤**EU:**",value=quebrar_linha(text,tamanho=10)+" ✔️",disabled=True,max_chars=500)
+
+
+       
+        # chat("Por favor, faça uma pergunta sobre os números de emergência.")
+    with st.sidebar:
+        pergunta_usuario = st.text_input("Digite sua pergunta aqui:")
+        bot = st.button("Enviar")
+        chat("Por favor, faça uma pergunta sobre os números de emergência.")
+        if pergunta_usuario!="":
+            chat_r(pergunta_usuario)
     
+        if bot:
+            resposta_chatbot = chatbot.respond(pergunta_usuario)
+            if resposta_chatbot:
+                tempo ()
+                chat(resposta_chatbot)
+                # chat(resposta_chatbot)
+                # Campo de entrada e botão são exibidos após a resposta do bot
+                # pergunta_usuario = st.text_input("Digite sua pergunta aqui:")
+                # bot = st.button("Enviar")
+            else:
+                chat("Desculpe, não consegui entender a pergunta. Por favor, tente novamente.")
+                chat("Qual é o número do **SAMU**?")
+                chat("Qual é o número da **Defesa Civil**?")
+                chat("Qual é o número do **Corpo de Bombeiros**?")
+                chat("Qual é o número da **Polícia Civil**?")
+                chat("Qual é o número da **Polícia Militar**?")
+                chat("Qual é o número da **Guarda Municipal**?")
 
-    chat("Por favor, faça uma pergunta sobre os números de emergência.")
-    # st.write("Por favor, faça uma pergunta sobre os números de emergência.")
 
-    # Campo de entrada para a pergunta e botão "Enviar"
-    pergunta_usuario = st.text_input("Digite sua pergunta aqui:")
-    bot = st.button("Enviar")
 
-    if bot:
-        resposta_chatbot = chatbot.respond(pergunta_usuario)
-        if resposta_chatbot:
-            chat(resposta_chatbot)
-            # Campo de entrada e botão são exibidos após a resposta do bot
-            # pergunta_usuario = st.text_input("Digite sua pergunta aqui:")
-            # bot = st.button("Enviar")
-        else:
-            st.text_input("🤖**BOT:**",value="Desculpe, não consegui entender a pergunta. Por favor, tente novamente.",disabled=True)
-            st.text_input("🤖**BOT:**" ,value="Qual é o número do **SAMU**?",disabled=True)
-            st.text_input("🤖**BOT:**",value="Qual é o número da **Defesa Civil**?",disabled=True)
-            st.text_input("🤖**BOT:**", value="Qual é o número do **Corpo de Bombeiros**?",disabled=True)
-            st.text_input("🤖**BOT:**", value="Qual é o número da **Polícia Civil**?",disabled=True)
-            st.text_input("🤖**BOT:**", value="Qual é o número da **Polícia Militar**?",disabled=True)
-            st.text_input("🤖**BOT:**", value="Qual é o número da **Guarda Municipal**?",disabled=True)
+    
 
 if __name__ == "__main__":
     main()
 
  
+
+
+
